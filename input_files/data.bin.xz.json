@@ -1,0 +1,7 @@
+{
+    "original_file": "input_files/data.bin",
+    "compressed_file": "input_files/data.bin.xz",
+    "original_size": 10,
+    "compressed_size": 68,
+    "sha256": "1ccd6b20a3c97b90be42278201942d042c0c1a50f4d612089636bdbbbe53fcee"
+}

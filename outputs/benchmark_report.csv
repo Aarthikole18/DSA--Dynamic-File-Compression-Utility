@@ -1,0 +1,6 @@
+Codec,Original Size,Compressed Size,Compression Ratio (%)
+ZSTD,140,82,58.57
+GZIP,140,104,74.29
+BZIP2,140,110,78.57
+LZMA,140,140,100.0
+BROTLI,140,50,35.71

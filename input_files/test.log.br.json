@@ -1,0 +1,7 @@
+{
+    "original_file": "input_files/test.log",
+    "compressed_file": "input_files/test.log.br",
+    "original_size": 7,
+    "compressed_size": 11,
+    "sha256": "2653331fcbab9d76d44fdef85140d8c1d01594509c1136e4177129ce7d97a42d"
+}
