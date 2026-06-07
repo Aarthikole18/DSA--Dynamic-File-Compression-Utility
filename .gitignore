@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+.env
+
+uploads/
+compressed_files/
+decompressed_files/
+
+outputs/*.csv
+
+.vscode/
+
+.DS_Store

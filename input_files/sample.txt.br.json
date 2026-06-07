@@ -1,0 +1,7 @@
+{
+    "original_file": "input_files/sample.txt",
+    "compressed_file": "input_files/sample.txt.br",
+    "original_size": 140,
+    "compressed_size": 61,
+    "sha256": "e653e5565bd8f02ff4519d0e0623202609094e2cdf657ddd96657978fce1b76d"
+}

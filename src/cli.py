@@ -7,6 +7,10 @@ from src.verify import (
 )
 from src.benchmark import benchmark_file
 from src.archive import compress_folder
+from src.analytics import (
+    save_compression_history,
+    generate_chart
+)
 
 
 def main():
@@ -20,7 +24,7 @@ def main():
     )
 
     # ==================================================
-    # COMPRESS COMMAND
+    # COMPRESS
     # ==================================================
     compress_parser = subparsers.add_parser(
         "compress",
@@ -33,55 +37,63 @@ def main():
     )
 
     # ==================================================
-    # DECOMPRESS COMMAND
+    # DECOMPRESS
     # ==================================================
     decompress_parser = subparsers.add_parser(
         "decompress",
-        help="Decompress a compressed file"
+        help="Decompress a file"
     )
 
     decompress_parser.add_argument(
         "path",
-        help="Path of compressed file"
+        help="Compressed file path"
     )
 
     # ==================================================
-    # BENCHMARK COMMAND
+    # BENCHMARK
     # ==================================================
     benchmark_parser = subparsers.add_parser(
         "benchmark",
-        help="Compare all compression codecs"
+        help="Benchmark all codecs"
     )
 
     benchmark_parser.add_argument(
         "path",
-        help="Path of file to benchmark"
+        help="Path of file"
     )
 
     # ==================================================
-    # VERIFY COMMAND
+    # VERIFY
     # ==================================================
     verify_parser = subparsers.add_parser(
         "verify",
-        help="Verify manifest integrity"
+        help="Verify manifest"
     )
 
     verify_parser.add_argument(
         "manifest",
-        help="Path of manifest JSON file"
+        help="Manifest JSON file"
     )
 
     # ==================================================
-    # FOLDER COMMAND
+    # FOLDER
     # ==================================================
     folder_parser = subparsers.add_parser(
         "folder",
-        help="Compress an entire folder"
+        help="Compress a folder"
     )
 
     folder_parser.add_argument(
         "path",
-        help="Path of folder to compress"
+        help="Folder path"
+    )
+
+    # ==================================================
+    # CHART
+    # ==================================================
+    subparsers.add_parser(
+        "chart",
+        help="Generate compression analytics chart"
     )
 
     args = parser.parse_args()
@@ -91,18 +103,45 @@ def main():
     # ==================================================
     if args.command == "compress":
 
-        result = compress_file(args.path)
+        result = compress_file(
+            args.path
+        )
+
+        save_compression_history(
+            result
+        )
 
         print("\n" + "=" * 60)
         print("COMPRESSION SUCCESSFUL")
         print("=" * 60)
 
-        print(f"Selected Codec     : {result['codec']}")
-        print(f"Output File        : {result['output']}")
-        print(f"Manifest File      : {result['manifest']}")
-        print(f"Original Size      : {result['original_size']} bytes")
-        print(f"Compressed Size    : {result['compressed_size']} bytes")
-        print(f"Compression Ratio  : {result['ratio']:.2f}%")
+        print(
+            f"Selected Codec     : {result['codec']}"
+        )
+
+        print(
+            f"Output File        : {result['output']}"
+        )
+
+        print(
+            f"Manifest File      : {result['manifest']}"
+        )
+
+        print(
+            f"Original Size      : {result['original_size']} bytes"
+        )
+
+        print(
+            f"Compressed Size    : {result['compressed_size']} bytes"
+        )
+
+        print(
+            f"Compression Ratio  : {result['ratio']:.2f}%"
+        )
+
+        print(
+            f"Saved Bytes        : {result['saved_bytes']} bytes"
+        )
 
         print("=" * 60)
 
@@ -119,7 +158,9 @@ def main():
         print("DECOMPRESSION SUCCESSFUL")
         print("=" * 60)
 
-        print(f"Output File : {output_file}")
+        print(
+            f"Output File : {output_file}"
+        )
 
         print("=" * 60)
 
@@ -152,7 +193,9 @@ def main():
                 f"{row[3]}"
             )
 
-        print("\nReport Saved:", report_file)
+        print(
+            f"\nReport Saved : {report_file}"
+        )
 
         print("=" * 60)
 
@@ -170,14 +213,21 @@ def main():
         print("=" * 60)
 
         if result:
-            print("Integrity Check Passed")
+
+            print(
+                "Integrity Check Passed"
+            )
+
         else:
-            print("Integrity Check Failed")
+
+            print(
+                "Integrity Check Failed"
+            )
 
         print("=" * 60)
 
     # ==================================================
-    # FOLDER COMPRESSION
+    # FOLDER
     # ==================================================
     elif args.command == "folder":
 
@@ -189,7 +239,26 @@ def main():
         print("FOLDER COMPRESSION SUCCESSFUL")
         print("=" * 60)
 
-        print(f"Archive Created : {archive_file}")
+        print(
+            f"Archive Created : {archive_file}"
+        )
+
+        print("=" * 60)
+
+    # ==================================================
+    # CHART
+    # ==================================================
+    elif args.command == "chart":
+
+        generate_chart()
+
+        print("\n" + "=" * 60)
+        print("ANALYTICS CHART GENERATED")
+        print("=" * 60)
+
+        print(
+            "Saved: outputs/compression_chart.png"
+        )
 
         print("=" * 60)
 

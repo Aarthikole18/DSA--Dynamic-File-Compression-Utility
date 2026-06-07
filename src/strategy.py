@@ -1,51 +1,74 @@
 from dataclasses import dataclass
-import os
+from src.detector import get_file_stats
 
 
 @dataclass
 class Plan:
     codec: str
     level: int
+    reason: str
 
 
-def choose_strategy(path):
+def choose_strategy(filepath):
 
-    extension = os.path.splitext(path)[1].lower()
+    stats = get_file_stats(filepath)
 
-    text_extensions = [
-        ".txt",
-        ".csv",
-        ".json",
-        ".xml",
-        ".html",
-        ".css",
-        ".js"
-    ]
+    entropy = stats["entropy"]
+    text_ratio = stats["text_ratio"]
+    mime_type = stats["mime_type"]
 
-    if extension in text_extensions:
+    # Already compressed media
+    if (
+        mime_type.startswith("image/")
+        or mime_type.startswith("video/")
+        or mime_type.startswith("audio/")
+    ):
+        return Plan(
+            codec="store",
+            level=0,
+            reason="Already compressed media"
+        )
+
+    # JSON / CSV
+    if (
+        "json" in mime_type
+        or "csv" in mime_type
+    ):
+        return Plan(
+            codec="zstd",
+            level=8,
+            reason="Structured text data"
+        )
+
+    # Plain text
+    if text_ratio > 0.9:
+
+        if entropy < 5:
+
+            return Plan(
+                codec="brotli",
+                level=9,
+                reason="Highly compressible text"
+            )
 
         return Plan(
             codec="zstd",
-            level=8
+            level=6,
+            reason="General text file"
         )
 
-    elif extension in [".log"]:
-
-        return Plan(
-            codec="brotli",
-            level=9
-        )
-
-    elif extension in [".bin"]:
+    # Binary data
+    if entropy > 7:
 
         return Plan(
             codec="lzma",
-            level=6
+            level=7,
+            reason="High entropy binary data"
         )
 
-    else:
-
-        return Plan(
-            codec="gzip",
-            level=6
-        )
+    # Default
+    return Plan(
+        codec="zstd",
+        level=6,
+        reason="Balanced compression"
+    )
